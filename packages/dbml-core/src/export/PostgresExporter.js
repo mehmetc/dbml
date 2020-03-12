@@ -212,6 +212,15 @@ class PostgresExporter {
           ? `"${schema.name}".` : ''}"${table.name}"."${field.name}" IS '${field.note}'`;
       }
 
+      if (comment.type === 'table') {
+        const table = model.tables[comment.tableId];
+        const schema = model.schemas[table.schemaId];
+
+        line += ` TABLE ${shouldPrintSchema(schema, model)
+          ? `"${schema.name}".` : ''}"${table.name}" IS '${table.note}'`;
+
+      }
+
       line += ';\n';
 
       return line;
@@ -262,6 +271,12 @@ class PostgresExporter {
           .filter((fieldId) => model.fields[fieldId].note)
           .map((fieldId) => ({ type: 'column', fieldId }));
       }))));
+
+      comments.push(...(_.flatten(tableIds
+        .filter((tableId) => model.tables[tableId].note)
+        .map((tableId) => ({ type: 'table', tableId }))
+      )));
+
     });
 
     if (!_.isEmpty(indexIds)) {

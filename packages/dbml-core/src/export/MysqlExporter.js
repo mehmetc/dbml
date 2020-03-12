@@ -103,7 +103,8 @@ class MySQLExporter {
       const schema = model.schemas[table.schemaId];
       const tableStr = `CREATE TABLE ${shouldPrintSchema(schema, model)
         ? `\`${schema.name}\`.` : ''}\`${table.name}\` (\n${
-        content.map(line => `  ${line}`).join(',\n')}\n);\n`;
+        content.map(line => `  ${line}`).join(',\n')}\n)${table.note ? ` COMMENT '${table.note}'` : ''};\n`;
+
       return tableStr;
     });
 
